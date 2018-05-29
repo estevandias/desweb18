@@ -1,43 +1,31 @@
-package usjt.olimpiada.service;
+package service;
 
-import java.util.ArrayList;
 
-import usjt.olimpiada.dao.PaisDAO;
-import usjt.olimpiada.model.Pais;
+
+import java.util.List;
+
+import dao.PaisDAO;
+import model.Pais;
 
 public class PaisService {
-
-	PaisDAO paisDAO = new PaisDAO();
+	PaisDAO dao = new PaisDAO();
 	
-	public boolean criar(Pais pais) {
-		return paisDAO.criar(pais);
+	public Pais criar(Pais pais) {
+		return dao.criar(pais);
 	}
-	
-	public boolean atualizar(Pais pais) {
-		return paisDAO.atualiza(pais);
+	public Pais carregar(Pais pais) {
+		return dao.carregar(pais);
 	}
-
-	public boolean excluir(int idPais) {
-		return paisDAO.excluir(idPais);
+	public Pais carregarNome(Pais pais) {
+		return dao.carregarNome(pais);
 	}
-
-	public Pais carregar(int idPais) {
-		return paisDAO.carregar(idPais);
+	public void excluir(int id) {
+		dao.excluir(id);
 	}
-	
-	public ArrayList<Pais> buscaPaises() {
-		return paisDAO.buscaPaises();
+	public void atualizar(Pais pais) {
+		dao.atualizar(pais);
 	}
-	
-	public Pais paisMaiorPopulacao() {
-		return paisDAO.paisMaiorPopulacao();
-	}
-	
-	public Pais paisMenorArea() {
-		return paisDAO.paisMenorArea();
-	}
-	
-	public ArrayList<Pais> retornaTresPaises() {
-		return paisDAO.retornaTresPaises();
+	public List <Pais> listar (){
+		return dao.listar();
 	}
 }

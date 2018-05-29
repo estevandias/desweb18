@@ -1,20 +1,83 @@
-package dao;
+package aula01;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
-import model.Modalidade;
-import model.Olimpiada;
-import model.Pais;
-
-public class OlimpiadaDAO {
+public class Olimpiada {
+	private int ano;
+	private String tipo;
+		
+		// Constructor.
+	public Olimpiada() {
+		super();
+	}
+	public Olimpiada(int ano, String tipo) {
+		setAno(ano);
+		setTipo(tipo);
+	}
+	
+		// Getters And Setters
+	public int getAno() {
+		return ano;
+	}
+	public void setAno(int ano) {
+		this.ano = ano;
+	}
+	public String getTipo() {
+		return tipo;
+	}
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ano;
+		result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Olimpiada other = (Olimpiada) obj;
+		if (ano != other.ano)
+			return false;
+		if (tipo == null) {
+			if (other.tipo != null)
+				return false;
+		} else if (!tipo.equals(other.tipo))
+			return false;
+		return true;
+	}
+	
+	static {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+		// Obtém conexão com o banco de dados
+	public Connection obtemConexao() throws SQLException {
+		return DriverManager
+				.getConnection("jdbc:mysql://localhost/olimpBd?user=root&password=");
+	}
+	
+		// INSERT
 	public void criar(Pais pais, Olimpiada olimpiada, Modalidade modalidade) {
 		String sqlInsert = "INSERT INTO olimpiada(ouro, prata, bronze, pais_idpais, modalidade_idmodalidade, ano_idano) VALUES (?, ?, ?, ?, ?, ?)";
-		try (Connection conn = ConnectionFactory.obtemConexao();
+		try (Connection conn = obtemConexao();
 				PreparedStatement stm = conn.prepareStatement(sqlInsert);) {
 			stm.setInt(1, modalidade.getOuro());
 			stm.setInt(2, modalidade.getPrata());
@@ -28,37 +91,10 @@ public class OlimpiadaDAO {
 		}
 	}
 	
-	public List<Olimpiada> listar(){
-		List <Olimpiada> olimpiada= new ArrayList <>();
-		String sql = "SELECT * FROM ano";
-		try (Connection conn = (Connection) ConnectionFactory.obtemConexao();
-				PreparedStatement ps = conn.prepareStatement(sql);
-				ResultSet rs = ps.executeQuery()){
-				try {
-					while (rs.next()) {
-						int    id   	= rs.getInt("idano");
-						String tipo = rs.getString("tipo");
-
-						Olimpiada olimp = new Olimpiada();
-						olimp.setAno(id);
-						olimp.setTipo(tipo);
-						olimpiada.add(olimp);
-						
-					}
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		return olimpiada;
-	}
+		// SELECT
 	public Modalidade carregar(Pais pais, Olimpiada olimpiada, Modalidade modalidade) {
 		String sqlSelect = "SELECT ouro, prata, bronze FROM olimpiada WHERE pais_idpais = ? and modalidade_idmodalidade = ? and ano_idano = ?";
-		try (Connection conn = (Connection) ConnectionFactory.obtemConexao();
+		try (Connection conn = obtemConexao();
 				PreparedStatement stm = conn.prepareStatement(sqlSelect);) {
 			stm.setInt(1, pais.getId());
 			stm.setInt(2, modalidade.getId());
@@ -81,9 +117,11 @@ public class OlimpiadaDAO {
 		}
 		return modalidade;
 	}
+	
+		// DELETE
 	public void excluir(Pais pais, Modalidade modalidade, Olimpiada olimpiada) {
 		String sqlDelete = "DELETE FROM olimpiada WHERE pais_idpais = ? and modalidade_idmodalidade = ? and ano_idano = ?";
-		try (Connection conn = (Connection) ConnectionFactory.obtemConexao();
+		try (Connection conn = obtemConexao();
 				PreparedStatement stm = conn.prepareStatement(sqlDelete);) {
 			stm.setInt(1, pais.getId());
 			stm.setInt(2, modalidade.getId());
@@ -94,9 +132,10 @@ public class OlimpiadaDAO {
 		}
 	}
 	
+		// UPDATE
 	public void atualizar(Pais pais, Modalidade modalidade, Olimpiada olimpiada){
 		String sqlUpdate = "UPDATE olimpiada SET ouro=?, prata=?, bronze=? WHERE pais_idpais=? and modalidade_idmodalidade=? and ano_idano=?";
-		try (Connection conn = (Connection) ConnectionFactory.obtemConexao();
+		try (Connection conn = obtemConexao();
 				PreparedStatement stm = conn.prepareStatement(sqlUpdate);) {
 			stm.setInt(1, modalidade.getOuro());
 			stm.setInt(2, modalidade.getPrata());

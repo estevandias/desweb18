@@ -1,4 +1,4 @@
-package model;
+package aula01;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
