@@ -1,151 +1,88 @@
-package model;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+package usjt.olimpiada.model;
 
 public class Olimpiada {
-	private int ano;
-	private String tipo;
-		
-		// Constructor.
+
+	private int id;
+	private Pais pais;
+	private Modalidade modalidade;
+	private Ano ano;
+	private int ouro;
+	private int prata;
+	private int bronze;
+	private char tipo;
+
+	
 	public Olimpiada() {
-		super();
-	}
-	public Olimpiada(int ano, String tipo) {
-		setAno(ano);
-		setTipo(tipo);
+		
 	}
 	
-		// Getters And Setters
-	public int getAno() {
-		return ano;
-	}
-	public void setAno(int ano) {
+	public Olimpiada(int id, Pais pais, Modalidade modalidade, Ano ano, int ouro, int prata, int bronze, char tipo) {
+		super();
+		this.id = id;
+		this.pais = pais;
+		this.modalidade = modalidade;
 		this.ano = ano;
-	}
-	public String getTipo() {
-		return tipo;
-	}
-	public void setTipo(String tipo) {
+		this.ouro = ouro;
+		this.prata = prata;
+		this.bronze = bronze;
 		this.tipo = tipo;
 	}
 	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ano;
-		result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
-		return result;
+	public int getId() {
+		return id;
 	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Olimpiada other = (Olimpiada) obj;
-		if (ano != other.ano)
-			return false;
-		if (tipo == null) {
-			if (other.tipo != null)
-				return false;
-		} else if (!tipo.equals(other.tipo))
-			return false;
-		return true;
+	public void setId(int id) {
+		this.id = id;
 	}
-	
-	static {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
+	public Pais getPais() {
+		return pais;
 	}
-	
-		// Obtém conexão com o banco de dados
-	public Connection obtemConexao() throws SQLException {
-		return DriverManager
-				.getConnection("jdbc:mysql://localhost/olimpBd?user=root&password=");
+	public void setPais(Pais pais) {
+		this.pais = pais;
 	}
-	
-		// INSERT
-	public void criar(Pais pais, Olimpiada olimpiada, Modalidade modalidade) {
-		String sqlInsert = "INSERT INTO olimpiada(ouro, prata, bronze, pais_idpais, modalidade_idmodalidade, ano_idano) VALUES (?, ?, ?, ?, ?, ?)";
-		try (Connection conn = obtemConexao();
-				PreparedStatement stm = conn.prepareStatement(sqlInsert);) {
-			stm.setInt(1, modalidade.getOuro());
-			stm.setInt(2, modalidade.getPrata());
-			stm.setInt(3, modalidade.getBronze());
-			stm.setInt(4, pais.getId());
-			stm.setInt(5, modalidade.getId());
-			stm.setInt(6, olimpiada.getAno());
-			stm.execute();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-		// SELECT
-	public Modalidade carregar(Pais pais, Olimpiada olimpiada, Modalidade modalidade) {
-		String sqlSelect = "SELECT ouro, prata, bronze FROM olimpiada WHERE pais_idpais = ? and modalidade_idmodalidade = ? and ano_idano = ?";
-		try (Connection conn = obtemConexao();
-				PreparedStatement stm = conn.prepareStatement(sqlSelect);) {
-			stm.setInt(1, pais.getId());
-			stm.setInt(2, modalidade.getId());
-			stm.setInt(3, olimpiada.getAno());
-			try (ResultSet rs = stm.executeQuery();) {
-				if (rs.next()) {
-					modalidade.setOuro(rs.getInt("ouro"));
-					modalidade.setPrata(rs.getInt("prata"));
-					modalidade.setBronze(rs.getInt("bronze"));
-				} else {
-					modalidade.setOuro(-1);
-					modalidade.setPrata(-1);
-					modalidade.setBronze(-1);
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} catch (SQLException e1) {
-			System.out.print(e1.getStackTrace());
-		}
+	public Modalidade getModalidade() {
 		return modalidade;
 	}
-	
-		// DELETE
-	public void excluir(Pais pais, Modalidade modalidade, Olimpiada olimpiada) {
-		String sqlDelete = "DELETE FROM olimpiada WHERE pais_idpais = ? and modalidade_idmodalidade = ? and ano_idano = ?";
-		try (Connection conn = obtemConexao();
-				PreparedStatement stm = conn.prepareStatement(sqlDelete);) {
-			stm.setInt(1, pais.getId());
-			stm.setInt(2, modalidade.getId());
-			stm.setInt(3, olimpiada.getAno());
-			stm.execute();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public void setModalidade(Modalidade modalidade) {
+		this.modalidade = modalidade;
+	}
+	public Ano getAno() {
+		return ano;
+	}
+	public void setAno(Ano ano) {
+		this.ano = ano;
+	}
+	public int getOuro() {
+		return ouro;
+	}
+	public void setOuro(int ouro) {
+		this.ouro = ouro;
+	}
+	public int getPrata() {
+		return prata;
+	}
+	public void setPrata(int prata) {
+		this.prata = prata;
+	}
+	public int getBronze() {
+		return bronze;
+	}
+	public void setBronze(int bronze) {
+		this.bronze = bronze;
 	}
 	
-		// UPDATE
-	public void atualizar(Pais pais, Modalidade modalidade, Olimpiada olimpiada){
-		String sqlUpdate = "UPDATE olimpiada SET ouro=?, prata=?, bronze=? WHERE pais_idpais=? and modalidade_idmodalidade=? and ano_idano=?";
-		try (Connection conn = obtemConexao();
-				PreparedStatement stm = conn.prepareStatement(sqlUpdate);) {
-			stm.setInt(1, modalidade.getOuro());
-			stm.setInt(2, modalidade.getPrata());
-			stm.setInt(3, modalidade.getBronze());
-			stm.setInt(4, pais.getId());
-			stm.setInt(5, modalidade.getId());
-			stm.setInt(6, olimpiada.getAno());
-			stm.execute();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public char getTipo() {
+		return tipo;
 	}
+
+	public void setTipo(char tipo) {
+		this.tipo = tipo;
+	}
+
+	@Override
+	public String toString() {
+		return "Olimpiada [id="+ id + ", pais=" + pais + ", modalidade=" + modalidade + ", ano=" + ano + ", ouro=" + ouro + ", prata="
+				+ prata + ", bronze=" + bronze + ", tipo=" + tipo + "]";
+	}
+	
 }

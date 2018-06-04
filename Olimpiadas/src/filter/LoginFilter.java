@@ -1,51 +1,77 @@
-package filter;
+package usjt.olimpiada.filter;
 
 import java.io.IOException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import model.Usuario;
+import usjt.olimpiada.model.Usuario;
 
-@WebFilter("/controller.do")
+/**
+ * 
+ * @author Leonardo de Andrade
+ * RA: 8162259292
+ * Data de Criação: 17/05/2018
+ * 
+ */
+@WebFilter("/*")
 public class LoginFilter implements Filter {
 
-	public void destroy() {
+	/**
+	 * Default constructor.
+	 */
+	public LoginFilter() {
+		// TODO Auto-generated constructor stub
 	}
 
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException {
-		// place your code here
+	/**
+	 * @see Filter#destroy()
+	 */
+	public void destroy() {
+		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
+	 */
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+		
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpSession session = req.getSession();
-		Usuario logado = (Usuario) session.getAttribute("logado");
+		Usuario UsuarioLogado = (Usuario) session.getAttribute("logado");
 		String path = req.getContextPath();
 		String uri = req.getRequestURI();
 		String comando = req.getParameter("command");
-		if(comando == null){
+		
+		if(comando == null) {
 			comando = "";
 		}
-
-		if (logado == null && !uri.equals(path + "/Login.jsp")
+		
+		if(UsuarioLogado == null && !uri.equals(path + "/LoginOlimpiada.jsp")
 				&& !comando.equals("FazerLogin")) {
-			((HttpServletResponse) response).sendRedirect(path + "/Login.jsp");
-		} else {
-			// pass the request along the filter chain
+			RequestDispatcher view = request.getRequestDispatcher("/WEB-INF/views/LoginOlimpiada.jsp");
+			view.forward(request, response);
+		}else{
 			chain.doFilter(request, response);
 		}
 	}
 
+	/**
+	 * @see Filter#init(FilterConfig)
+	 */
 	public void init(FilterConfig fConfig) throws ServletException {
+		// TODO Auto-generated method stub
 	}
 
 }

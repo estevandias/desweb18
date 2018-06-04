@@ -1,32 +1,45 @@
-package model;
+package usjt.olimpiada.model;
 
-import java.io.Serializable;
+/**
+ * 
+ * @author Leonardo de Andrade
+ * RA: 8162259292
+ * Data de Criação: 17/05/2018
+ * 
+ */
+public class Usuario {
 
-public class Usuario implements Serializable {
-	private static final long serialVersionUID = 1L;
-
-	private String username;
-	private String password;
-
-	public String getPassword() {
-		return password;
+	private String usuario;
+	private String senha;
+	
+	public Usuario() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public Usuario(String usuario, String senha) {
+		this.usuario = usuario;
+		this.senha = senha;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public String getUsuario() {
+		return usuario;
 	}
 
-	public String getUsername() {
-		return username;
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
 	}
 
 	@Override
 	public String toString() {
-		return "Usuario [username=" + username + ", password=" + password
-				+ "]";
+		return "Usuario [usuario=" + usuario + ", senha=" + senha + "]";
 	}
+	
 }

@@ -1,127 +1,123 @@
-package dao;
+package usjt.olimpiada.dao;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
-import model.Modalidade;
-import model.Olimpiada;
-import model.Pais;
+import usjt.olimpiada.model.Modalidade;
 
 public class ModalidadeDAO {
-	// INSERT
-	public Modalidade criar(Modalidade modalidade, Olimpiada olimpiada) {
-		String sqlInsert = "INSERT INTO modalidade(nome, tipo) VALUES ( ?, ?)";
-		try (Connection conn = ConnectionFactory.obtemConexao();
-				PreparedStatement stm = conn.prepareStatement(sqlInsert);) {
+
+	public boolean criar(Modalidade modalidade) {
+		boolean gravado = false;
+		String sqlInsert = "INSERT INTO modalidade(nome, tipo) VALUES (?, ?)";
+		// usando o try with resources do Java 7, que fecha o que abriu
+		try (Connection conn = ConnectionFactory.obtemConexao(); PreparedStatement stm = conn.prepareStatement(sqlInsert);) {
 			stm.setString(1, modalidade.getNome());
-			stm.setString(2, olimpiada.getTipo());
+			stm.setString(2, String.valueOf(modalidade.getTipo()));
 			stm.execute();
 			String sqlQuery = "SELECT LAST_INSERT_ID()";
-			try (PreparedStatement stm2 = conn.prepareStatement(sqlQuery);
-					ResultSet rs = stm2.executeQuery();) {
+			try (PreparedStatement stm2 = conn.prepareStatement(sqlQuery); ResultSet rs = stm2.executeQuery();) {
 				if (rs.next()) {
 					modalidade.setId(rs.getInt(1));
 				}
+				gravado = true;
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return modalidade;
+		
+		return gravado;
 	}
-	
-	public Modalidade carregar(Modalidade modalidade) {
-		String sqlSelect = "SELECT nome FROM modalidade WHERE idmodalidade = ?";
-		try (Connection conn = ConnectionFactory.obtemConexao();
-				PreparedStatement stm = conn.prepareStatement(sqlSelect);) {
-			stm.setInt(1, modalidade.getId());
-			try (ResultSet rs = stm.executeQuery();) {
-				if (rs.next()) {
-					modalidade.setNome(rs.getString("nome"));
-				} else {
-					modalidade.setId(-1);
-					modalidade.setNome(null);
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} catch (SQLException e1) {
-			System.out.print(e1.getStackTrace());
-		}
-		return modalidade;
-	}
-	
-	public Modalidade carregarNome(Modalidade modalidade) {
-		String sqlSelect = "SELECT idmodalidade FROM modalidade WHERE nome = ?";
-		try (Connection conn = ConnectionFactory.obtemConexao();
-				PreparedStatement stm = conn.prepareStatement(sqlSelect);) {
+
+	public boolean atualiza(Modalidade modalidade) {
+		boolean gravado = false;
+		String sqlUpdate = "UPDATE modalidade SET nome=?, tipo=? WHERE id_modalidade=?";
+		// usando o try with resources do Java 7, que fecha o que abriu
+		try (Connection conn = ConnectionFactory.obtemConexao(); PreparedStatement stm = conn.prepareStatement(sqlUpdate);) {
 			stm.setString(1, modalidade.getNome());
-			try (ResultSet rs = stm.executeQuery();) {
-				if (rs.next()) {
-					modalidade.setId(rs.getInt("idmodalidade"));
-				} else {
-					modalidade.setId(-1);
-					modalidade.setNome(null);
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} catch (SQLException e1) {
-			System.out.print(e1.getStackTrace());
-		}
-		return modalidade;
-	}
-	
-	public void excluir(int id) {
-		String sqlDelete = "DELETE FROM modalidade WHERE idmodalidade = ?";
-		try (Connection conn = ConnectionFactory.obtemConexao();
-				PreparedStatement stm = conn.prepareStatement(sqlDelete);) {
-			stm.setInt(1, id);
-			stm.execute();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void atualizar(Modalidade modalidade, Olimpiada olimpiada) {
-		String sqlUpdate = "UPDATE modalidade SET nome=?, tipo=?, WHERE idmodalidade=?";
-		try (Connection conn = ConnectionFactory.obtemConexao();
-				PreparedStatement stm = conn.prepareStatement(sqlUpdate);) {
-			stm.setString(1, modalidade.getNome());
-			stm.setString(2, olimpiada.getTipo());
+			stm.setString(2, String.valueOf(modalidade.getTipo()));
 			stm.setInt(3, modalidade.getId());
 			stm.execute();
+			
+			gravado = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		return gravado;
 	}
-	
-	public List<Modalidade> listarModalidade() {
-		List <Modalidade> modalidade = new ArrayList <>();
-		String sql = "SELECT * FROM modalidade";
-		try (Connection conn = ConnectionFactory.obtemConexao();
-				PreparedStatement ps = conn.prepareStatement(sql);
-				ResultSet rs = ps.executeQuery()){
-				while (rs.next()) {
-					int    id   	= rs.getInt("idmodalidade");
-					String nome 	= rs.getString("nome");
-					String tipo = rs.getString("tipo");
 
-					Modalidade mode = new Modalidade();
-					mode.setId(id);
-					mode.setNome(nome);
-					modalidade.add(mode);
-
-				}
-		}
-		catch (Exception e) {
+	public boolean excluir(int idModalidade) {
+		boolean exclude = false;
+		String sqlDelete = "DELETE FROM modalidade WHERE id_modalidade = ?";
+		// usando o try with resources do Java 7, que fecha o que abriu
+		try (Connection conn = ConnectionFactory.obtemConexao(); PreparedStatement stm = conn.prepareStatement(sqlDelete);) {
+			stm.setInt(1, idModalidade);
+			stm.execute();
+			
+			exclude = true;
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		return exclude;
+	}
+
+	public Modalidade carregar(int idModalidade) {
+		Modalidade modalidade = new Modalidade();
+		String sqlSelect = "SELECT nome, tipo, id_modalidade FROM modalidade WHERE id_modalidade = ?";
+		// usando o try with resources do Java 7, que fecha o que abriu
+		try (Connection conn = ConnectionFactory.obtemConexao(); PreparedStatement stm = conn.prepareStatement(sqlSelect);) {
+			stm.setInt(1, idModalidade);
+			try (ResultSet rs = stm.executeQuery();) {
+				if (rs.next()) {
+					modalidade.setId(idModalidade);
+					modalidade.setNome(rs.getString("nome"));
+					modalidade.setTipo(rs.getString("tipo").charAt(0));
+				} else {
+					modalidade.setId(-1);
+					modalidade.setNome(null);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} catch (SQLException e1) {
+			System.out.print(e1.getStackTrace());
+		}
+
 		return modalidade;
+	}
+
+	public ArrayList<Modalidade> buscaModalidades() throws IOException {
+		ArrayList<Modalidade> modalidades = new ArrayList<>();
+		String sqlSelect = "SELECT id_modalidade, nome, tipo FROM modalidade";
+		
+		try (Connection conn = ConnectionFactory.obtemConexao();
+				PreparedStatement stm = conn.prepareStatement(sqlSelect);) {
+			
+			try (ResultSet rs = stm.executeQuery();) {
+				
+				while (rs.next()) {
+					Modalidade modalidade = new Modalidade();
+					modalidade.setId(rs.getInt("id_modalidade"));
+					modalidade.setNome(rs.getString("nome"));
+					modalidade.setTipo(rs.getString("tipo").charAt(0));
+					modalidades.add(modalidade);
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} catch (SQLException e1) {
+			System.out.print(e1.getStackTrace());
+		}
+		
+		return modalidades;
 	}
 }

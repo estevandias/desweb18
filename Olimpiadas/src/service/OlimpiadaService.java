@@ -1,30 +1,34 @@
-package service;
+package usjt.olimpiada.service;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.ArrayList;
 
-import dao.OlimpiadaDAO;
-import model.Modalidade;
-import model.Olimpiada;
-import model.Pais;
+import usjt.olimpiada.dao.OlimpiadaDAO;
+import usjt.olimpiada.model.Olimpiada;
 
 public class OlimpiadaService {
+
 	OlimpiadaDAO dao = new OlimpiadaDAO();
 	
-	public void criar(Pais pais, Olimpiada olimpiada, Modalidade modalidade) {
-		dao.criar(pais, olimpiada, modalidade);
-	}
-
-	public Modalidade carregar(Pais pais, Olimpiada olimpiada, Modalidade modalidade){
-		return dao.carregar(pais, olimpiada, modalidade);
+	public boolean criar(Olimpiada olimpiada) {
+		olimpiada.setTipo(olimpiada.getAno().getTipo());
+		return dao.criar(olimpiada);
 	}
 	
-	public void excluir(Pais pais, Modalidade modalidade, Olimpiada olimpiada) {
-		dao.excluir(pais, modalidade, olimpiada);
+	public boolean atualizar(Olimpiada olimpiada) {
+		return dao.atualiza(olimpiada);
 	}
-	public void atualizar(Pais pais, Modalidade modalidade, Olimpiada olimpiada) {
-		dao.atualizar(pais, modalidade, olimpiada);
+
+	public boolean excluir(Olimpiada olimpiada) {
+		return dao.excluir(olimpiada);
 	}
-	public List<Olimpiada> listar(){
-		return dao.listar();
+
+	public Olimpiada carregar(Olimpiada olimpiada) {
+		return dao.carregar(olimpiada);
 	}
+	
+	public ArrayList<Olimpiada> listaQuadro() throws IOException {
+		return dao.listaQuadro();
+	}
+	
 }

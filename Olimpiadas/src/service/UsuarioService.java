@@ -1,12 +1,19 @@
-package service;
+package usjt.olimpiada.service;
 
-import model.Usuario;
-import dao.UsuarioDAO;
+import usjt.olimpiada.dao.UsuarioDAO;
+import usjt.olimpiada.model.Usuario;
 
+/**
+ * 
+ * @author Leonardo de Andrade
+ * RA: 8162259292
+ * Data de Criação: 17/05/2018
+ */
 public class UsuarioService {
+
+	UsuarioDAO uDAO = new UsuarioDAO();
 	
-	public boolean validar(Usuario usuario){
-		UsuarioDAO dao = new UsuarioDAO();
-		return dao.validar(usuario);
+	public boolean validaUsuario(Usuario usuario) {
+		return uDAO.validaUsuario(usuario);
 	}
 }

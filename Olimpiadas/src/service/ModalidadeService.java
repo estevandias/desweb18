@@ -1,29 +1,32 @@
-package service;
-import java.util.List;
+package usjt.olimpiada.service;
 
-import dao.ModalidadeDAO;
-import model.Modalidade;
-import model.Olimpiada;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import usjt.olimpiada.dao.ModalidadeDAO;
+import usjt.olimpiada.model.Modalidade;
 
 public class ModalidadeService {
+
 	ModalidadeDAO dao = new ModalidadeDAO();
 	
-	public Modalidade criar(Modalidade modalidade, Olimpiada olimpiada) {
-		return dao.criar(modalidade, olimpiada);
+	public boolean criar(Modalidade modalidade) {
+		return dao.criar(modalidade);
 	}
-	public void excluir(int id) {
-		dao.excluir(id);
+	
+	public boolean atualizar(Modalidade modalidade) {
+		return dao.atualiza(modalidade);
 	}
-	public Modalidade carregar(Modalidade modalidade) {
-		return dao.carregar(modalidade);
+
+	public boolean excluir(int idModalidade) {
+		return dao.excluir(idModalidade);
 	}
-	public Modalidade carregarNome(Modalidade modalidade) {
-		return dao.carregarNome(modalidade);
+
+	public Modalidade carregar(int idModalidade) {
+		return dao.carregar(idModalidade);
 	}
-	public void atualizar(Modalidade modalidade, Olimpiada olimpiada) {
-		dao.atualizar(modalidade, olimpiada);
-	}
-	public List<Modalidade> listar(){
-		return dao.listarModalidade();
+	
+	public ArrayList<Modalidade> buscaModalidades() throws IOException{
+		return dao.buscaModalidades();
 	}
 }

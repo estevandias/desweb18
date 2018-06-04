@@ -1,55 +1,73 @@
-package model;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+package usjt.olimpiada.model;
 
 public class Pais {
-	private int 	id;
-	private String 	nome;
-	private int 	populacao;
-	private double 	area;
+
+	private int id;
+	private String nome;
+	private long populacao;
+	private double area;
 	
-		// Constructor
 	public Pais() {
-		super();
+		
 	}
-	public Pais(int id, String nome, int populacao, double area) {
-		setId(id);
-		setNome(nome);
-		setPopulacao(populacao);
-		setArea(area);
+
+	public Pais(int id, String nome, long populacao, double area) {
+		this.id = id;
+		this.nome = nome;
+		this.populacao = populacao;
+		this.area = area;
 	}
-	
-		// Getters And Setters
+
 	public int getId() {
 		return id;
 	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
+
 	public String getNome() {
 		return nome;
 	}
+
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	public int getPopulacao() {
+
+	public long getPopulacao() {
 		return populacao;
 	}
-	public void setPopulacao(int populacao) {
+
+	public void setPopulacao(long populacao) {
 		this.populacao = populacao;
 	}
+
 	public double getArea() {
 		return area;
 	}
+
 	public void setArea(double area) {
 		this.area = area;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "Pais [id=" + id + ", nome=" + nome + ", populacao=" + populacao + ", area=" + area + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(area);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + id;
+		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		result = prime * result + (int) (populacao ^ (populacao >>> 32));
+		return result;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -59,7 +77,7 @@ public class Pais {
 		if (getClass() != obj.getClass())
 			return false;
 		Pais other = (Pais) obj;
-		if (area != other.area)
+		if (Double.doubleToLongBits(area) != Double.doubleToLongBits(other.area))
 			return false;
 		if (id != other.id)
 			return false;
@@ -72,98 +90,6 @@ public class Pais {
 			return false;
 		return true;
 	}
-
-	static {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-	}
 	
-		// Obtém conexão com o banco de dados
-	public Connection obtemConexao() throws SQLException {
-		return DriverManager
-				.getConnection("jdbc:mysql://localhost/olimpBd?user=root&password=");
-	}
-	
-		// CRUD
-	// INSERT
-	public Pais criar(Pais pais) {
-		String sqlInsert = "INSERT INTO pais(nome, populacao, area) VALUES (?, ?, ?)";
-		try (Connection conn = obtemConexao();
-				PreparedStatement stm = conn.prepareStatement(sqlInsert);) {
-			stm.setString(1, pais.getNome());
-			stm.setInt(2, pais.getPopulacao());
-			stm.setDouble(3, pais.getArea());
-			stm.execute();
-			String sqlQuery = "SELECT LAST_INSERT_ID()";
-			try (PreparedStatement stm2 = conn.prepareStatement(sqlQuery);
-					ResultSet rs = stm2.executeQuery();) {
-				if (rs.next()) {
-					pais.setId(rs.getInt(1));
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return pais;
-	}
-	
-	// DELETE
-	public void excluir(int id) {
-		String sqlDelete = "DELETE FROM pais WHERE idpais = ?";
-		try (Connection conn = obtemConexao();
-				PreparedStatement stm = conn.prepareStatement(sqlDelete);) {
-			stm.setInt(1, id);
-			stm.execute();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	// SELECT
-	public Pais carregar(Pais pais) {
-		String sqlSelect = "SELECT nome, populacao, area FROM pais WHERE idpais = ?";
-		try (Connection conn = obtemConexao();
-				PreparedStatement stm = conn.prepareStatement(sqlSelect);) {
-			stm.setInt(1, pais.getId());
-			try (ResultSet rs = stm.executeQuery();) {
-				if (rs.next()) {
-					pais.setNome(rs.getString("nome"));
-					pais.setPopulacao(rs.getInt("populacao"));
-					pais.setArea(rs.getDouble("area"));
-				} else {
-					pais.setId(-1);
-					pais.setNome(null);
-					pais.setPopulacao(-1);
-					pais.setArea(-1);
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} catch (SQLException e1) {
-			System.out.print(e1.getStackTrace());
-		}
-		
-		return pais;
-	}
-	
-	// UPDATE
-	public void atualizar(Pais pais) {
-		String sqlUpdate = "UPDATE pais SET nome=?, populacao=?, area=? WHERE idpais=?";
-		try (Connection conn = obtemConexao();
-				PreparedStatement stm = conn.prepareStatement(sqlUpdate);) {
-			stm.setString(1, pais.getNome());
-			stm.setInt(2, pais.getPopulacao());
-			stm.setDouble(3, pais.getArea());
-			stm.setInt(4, pais.getId());
-			stm.execute();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	
 }
